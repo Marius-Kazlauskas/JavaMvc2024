@@ -54,7 +54,7 @@ public class ForecastController {
     private static ArrayList<ForecastModel> getForecasts(String city) throws IOException {
         var forecasts = new ArrayList<ForecastModel>();
 
-        if (city != null) {
+        if (city != null && !city.equals("")) {
             var meteoForecastsJson = GetMeteoForecastsJson(city);
             Root meteoObj = GetObjectFromJson(meteoForecastsJson);
             for (var item : meteoObj.forecastTimestamps) {
