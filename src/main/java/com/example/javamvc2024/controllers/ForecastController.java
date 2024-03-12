@@ -1,6 +1,10 @@
 package com.example.javamvc2024.controllers;
 
 import com.example.javamvc2024.models.ForecastModel;
+import com.example.javamvc2024.models.Root;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -18,9 +22,8 @@ public class ForecastController {
     public ModelAndView index() throws IOException {
         ModelAndView modelAndView = new ModelAndView("index");
 
-        var forecasts = getForecasts();
         var meteoForecastsJson = GetMeteoForecastsJson();
-        System.out.println(meteoForecastsJson);
+        var forecasts = getForecasts(meteoForecastsJson);
 
         modelAndView.addObject("forecasts", forecasts);
 
@@ -43,15 +46,21 @@ public class ForecastController {
         return text;
     }
 
-    private static ArrayList<ForecastModel> getForecasts() {
-        var forecasts = new ArrayList<ForecastModel>();
-        var row1 = new ForecastModel("2024-03-12 11:00", 1.0);
-        var row2 = new ForecastModel("2024-03-12 12:00", 2.0);
-        var row3 = new ForecastModel("2024-03-12 13:00", 3.0);
+    private static ArrayList<ForecastModel> getForecasts(String json) throws JsonProcessingException {
+        Root meteoObj = GetObjectFromJson(json);
 
-        forecasts.add(row1);
-        forecasts.add(row2);
-        forecasts.add(row3);
+        var forecasts = new ArrayList<ForecastModel>();
+        for (var item : meteoObj.forecastTimestamps) {
+            var row = new ForecastModel(item.forecastTimeUtc, item.airTemperature);
+            forecasts.add(row);
+        }
+
         return forecasts;
+    }
+
+    private static Root GetObjectFromJson(String json) throws JsonProcessingException {
+        ObjectMapper om = new ObjectMapper();
+        Root meteoObj = om.readValue(json, Root.class);
+        return meteoObj;
     }
 }
