@@ -22,13 +22,7 @@ public class ForecastController {
     @GetMapping("/")
     public ModelAndView index(@RequestParam(required = false) String city) throws IOException {
         ModelAndView modelAndView = new ModelAndView("index");
-
-        var meteoForecastsJson = (city != null)
-                ? GetMeteoForecastsJson(city)
-                : null;
-
-        var forecasts = getForecasts(meteoForecastsJson);
-
+        var forecasts = getForecasts(city);
         modelAndView.addObject("forecasts", forecasts);
 
         return modelAndView;
@@ -50,11 +44,12 @@ public class ForecastController {
         return text;
     }
 
-    private static ArrayList<ForecastModel> getForecasts(String json) throws JsonProcessingException {
+    private static ArrayList<ForecastModel> getForecasts(String city) throws IOException {
         var forecasts = new ArrayList<ForecastModel>();
 
-        if (json != null) {
-            Root meteoObj = GetObjectFromJson(json);
+        if (city != null) {
+            var meteoForecastsJson = GetMeteoForecastsJson(city);
+            Root meteoObj = GetObjectFromJson(meteoForecastsJson);
             for (var item : meteoObj.forecastTimestamps) {
                 var row = new ForecastModel(item.forecastTimeUtc, item.airTemperature);
                 forecasts.add(row);
