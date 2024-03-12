@@ -1,6 +1,7 @@
 package com.example.javamvc2024.controllers;
 
 import com.example.javamvc2024.models.ForecastModel;
+import com.example.javamvc2024.models.IndexModel;
 import com.example.javamvc2024.models.Root;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -22,8 +23,14 @@ public class ForecastController {
     @GetMapping("/")
     public ModelAndView index(@RequestParam(required = false) String city) throws IOException {
         ModelAndView modelAndView = new ModelAndView("index");
+
+        var indexModel = new IndexModel();
+        indexModel.city = city;
+
         var forecasts = getForecasts(city);
-        modelAndView.addObject("forecasts", forecasts);
+        indexModel.forecasts = forecasts;
+
+        modelAndView.addObject("indexModel", indexModel);
 
         return modelAndView;
     }

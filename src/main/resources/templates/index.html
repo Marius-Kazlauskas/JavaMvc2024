@@ -6,6 +6,15 @@
 </head>
 <body>
 
+<form method="get">
+    <select name="city" onchange="this.form.submit()">
+        <option value="" th:selected="${indexModel.city==''}">Select city:</option>
+        <option value="vilnius" th:selected="${indexModel.city=='vilnius'}">Vilnius</option>
+        <option value="kaunas" th:selected="${indexModel.city=='kaunas'}">Kaunas</option>
+        <option value="klaipeda" th:selected="${indexModel.city=='klaipeda'}">Klaipėda</option>
+    </select>
+</form>
+
 <table>
     <thead>
     <tr>
@@ -14,7 +23,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="forecast : ${forecasts}">
+    <tr th:each="forecast : ${indexModel.forecasts}">
         <td th:text="${forecast.dateTime}"></td>
         <td th:text="${forecast.temperature}"></td>
     </tr>
